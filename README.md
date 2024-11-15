@@ -73,6 +73,8 @@ TODO: Update when implementation is completed.
 ## How to Make Requsts
 You can make requests to this microservice using any HTTP client library in your programming language of choice.
 
+Pseudocode:
+
 ```Pseudocode
 FUNCTION getShuffledSequence(n):
     SET url = "http://localhost:8000/shuffle"
