@@ -1,1 +1,18 @@
-{"shuffle_history": [{"shuffled_sequence": [2, 3, 8, 5, 9, 7, 6, 1, 4, 10]}, {"shuffled_sequence": [4, 3, 8, 6, 5, 2, 7, 10, 9, 1]}, {"shuffled_sequence": [3, 6, 10, 1, 7, 9, 4, 8, 2, 5]}, {"shuffled_sequence": [9, 4, 6, 3, 8, 5, 7, 2, 10, 1]}, {"shuffled_sequence": [5, 10, 2, 7, 3, 9, 8, 1, 6, 4]}, {"shuffled_sequence": [6, 3, 4, 10, 1, 9, 7, 2, 5, 8]}, {"shuffled_sequence": [5, 4, 7, 2, 9, 6, 8, 3, 10, 1]}, {"shuffled_sequence": [7, 4, 6, 8, 2, 3, 9, 5, 1, 10]}]}
+{
+	"shuffle_history": [
+		{
+			"shuffled_sequence": [
+				10,
+				2,
+				4,
+				7,
+				6,
+				9,
+				8,
+				5,
+				1,
+				3
+			]
+		}
+	]
+}
