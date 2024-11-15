@@ -1,9 +1,10 @@
 #  Shuffling Microservice
+This microservice will shuffle a set number of items from 1 to n. It has various shuffling functions including basic, unique, and weighted. 
 
 ## Requirements
-The next section will provide a detaile guide on how to install the following:
+The next section will provide a detailed guide on how to install the following:
 - Python3 (recommended to install with a package manager).
-- Pip (should come with Python3).
+- Pip (should come with Python3 when its installed through a package manager).
 - A copy of this microservice downloaded somewhere on your computer.
 - The rest of the dependencies located in requirements.txt.
     - This will be installed automatically with `pip install -r requirements.txt` (Linux/macOS).
@@ -18,7 +19,7 @@ Once Python3 and Pip have been installed through your favorite package manager:
 2. Run `python -m venv venv`
     - This will use Python's builtin `venv` module to create a virtual environment.
     - This allows you to install dependencies in a virtual environment and not globally in your computer.
-    - To remove, simply `rm -rf` the file.
+    - To remove, simply `rm -rf` the venv file.
 
 3. Enter the newly created virtual environment with `source venv/bin/activate`
     - You should see `(venv)` on the far left side of your terminal line.
@@ -49,13 +50,13 @@ The microservice will then return:
 2. A list of shuffled numbers as the value
 
 #### Example for Basic Shuffle
-Main program JSON will send:
+Main program sends:
 ```JSON
 {
     "random_nums": 10
 }
 ```
-Microservice will respond with:
+Microservice responds with:
 ```JSON
 {
     "shuffled_sequence": [10, 2, 4, 7, 6, 9, 8, 5, 1, 3]
@@ -67,3 +68,25 @@ TODO: Update when implementation is completed.
 
 ### Weighted Shuffle
 TODO: Update when implementation is completed.
+
+
+## How to Make Requsts
+You can make requests to this microservice using any HTTP client library in your programming language of choice.
+
+```Pseudocode
+FUNCTION getShuffledSequence(n):
+    SET url = "http://localhost:8000/shuffle"
+    SET requestBody = {"random_nums": n}
+
+    SEND HTTP POST to url:
+        headers: {"Content-Type": "application/json"}
+        body: requestBody thats been converted to JSON string
+
+    IF response 200 (OK) then
+        SET responseData = parse JSON response
+        RETURN responseData.shuffled_sequence
+    ELSE
+        Error handling
+    END IF
+END FUNCTION
+
