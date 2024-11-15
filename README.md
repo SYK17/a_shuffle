@@ -76,7 +76,7 @@ You can make requests to this microservice using any HTTP client library in your
 Pseudocode example:
 
 ```Pseudocode
-FUNCTION getShuffledSequence(n):
+FUNCTION get_shuffled_sequence(n):
     SET url = "http://localhost:8000/shuffle"
     SET requestBody = {"random_nums": n}
 
@@ -92,3 +92,8 @@ FUNCTION getShuffledSequence(n):
     END IF
 END FUNCTION
 
+// Example call
+    SET shuffled_sequence = get_shuffled_sequence(10)
+
+// Returns {"shuffled_sequence": [10, 2, 4, 7, 6, 9, 8, 5, 1, 3]}
+```
