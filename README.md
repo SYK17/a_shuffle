@@ -70,7 +70,7 @@ TODO: Update when implementation is completed.
 TODO: Update when implementation is completed.
 
 
-## How to Make Requsts
+## How to Requst and Receive
 You can make requests to this microservice using any HTTP client library in your programming language of choice.
 
 Pseudocode example:
