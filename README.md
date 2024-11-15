@@ -93,8 +93,11 @@ FUNCTION get_shuffled_sequence(n):
 END FUNCTION
 
 // Example call
+
     SET shuffled_sequence = get_shuffled_sequence(10)
 
 // Returns {"shuffled_sequence": [10, 2, 4, 7, 6, 9, 8, 5, 1, 3]}
 ```
-![on4r5eupsm0e1](https://github.com/user-attachments/assets/241c3bc3-69a9-4e97-8a6b-aa8003b03d14)
+
+## UML Sequence Design
+![UML_sequence_diagram](https://github.com/user-attachments/assets/303996b0-3d0c-4724-9cde-239727150958)
