@@ -81,7 +81,7 @@ Microservice responds with:
 Main program sends:
 ```JSON
 {
-    "weighted_nums": 3
+    "weighted_nums": 3,
     "weights": [5, 1, 1]
 }
 ```
