@@ -88,7 +88,7 @@ Main program sends:
 Microservice responds with:
 ```JSON
 {
-    "shuffled_sequence": [1, 1, 1]  // likley sequence since '1' is given a weight of '5 out of possible '7'.
+    "shuffled_sequence": [1, 1, 1] // Likley sequence since '1' is given a weight of '5' out of possible '7'
 }
 ```
 
