@@ -1,18 +1,1 @@
-{
-	"shuffle_history": [
-		{
-			"shuffled_sequence": [
-				10,
-				2,
-				4,
-				7,
-				6,
-				9,
-				8,
-				5,
-				1,
-				3
-			]
-		}
-	]
-}
+{"last_sequence": [1, 3, 1]}

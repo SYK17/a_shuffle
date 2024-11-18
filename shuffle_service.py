@@ -1,13 +1,9 @@
-# Flask is the main framework for creating web services.
-# Request helps us read what the user sends as a request to this microservice.
-# jsonify helps us package response in JSON format.
-
+# Flask imports and setup...
 from flask import Flask, request, jsonify
 import os
 import json
 import random
 
-# Initialize new web service.
 app = Flask(__name__)
 
 ##################
@@ -29,42 +25,48 @@ def create_log():
         service_directory = os.path.dirname(os.path.abspath(__file__))
         log_file_path = os.path.join(service_directory, 'log.json')
 
-        if os.path.exists(log_file_path) is False:
-                with open(log_file_path, 'w') as log_file:
-                    json.dump({"shuffle_history": []}, log_file)
+        with open(log_file_path, 'w') as log_file:
+                json.dump({"last_sequence": []}, log_file)
 
         return log_file_path
 
 def save_sequence_to_log(shuffled_sequence):
         """
-        Saves a shuffled sequence to the log file with timestamp.
+        Overwrites log file with recent sequence.
         """
         log_file_path = create_log()
 
-        with open(log_file_path, 'r') as log_file:
-                log_data = json.load(log_file)
-
-        sequence_entry = {
-                "shuffled_sequence": shuffled_sequence
-        }
-        log_data["shuffle_history"].append(sequence_entry)
-
         with open(log_file_path, 'w') as log_file:
-                json.dump(log_data, log_file)
+                json.dump({"last_sequence": shuffled_sequence}, log_file)
 
 def validate_request_data(request_data):
         """
-        Validates the request data for proper format and constraints.
-
-        Arguments:  request_data (dict): The JSON request data
-        Returns:    (boolean, error_message, error_code)
+        Validates that exactly one valid shuffle type key is present with a positive integer.
         """
-        if not request_data or "random_nums" not in request_data:
-                return False, {'error': 'Please provide random_nums in the request body'}, 400
+        valid_keys = ["random_nums", "unique_nums", "weighted_nums"]
+        
+        # Check if request is empty
+        if not request_data:
+                return False, {'error': 'Request body is empty'}, 400
+        
+        # Check if exactly one valid key is present
+        present_keys = [key for key in valid_keys if key in request_data]
+        if len(present_keys) == 0:
+                return False, {'error': 'Please provide one of: random_nums, weighted_nums, or unique_nums'}, 400
+        if len(present_keys) > 1:
+                return False, {'error': 'Please provide only one of: random_nums, weighted_nums, or unique_nums'}, 400
+        
+        # Get the value for the present key
+        key = present_keys[0]
+        value = request_data[key]
+        
+        # Validate the value
+        if not isinstance(value, int) or value <= 0:
+                return False, {'error': f'{key} must be a positive integer'}, 400
 
-        playlist_size = request_data["random_nums"]
-        if not isinstance(playlist_size, int) or playlist_size <= 0:
-                return False, {'error': 'random_nums must be a positive integer'}, 400
+        # Special validation for weighted shuffle
+        if key == "weighted_nums" and "weights" not in request_data:
+                return False, {'error': 'weights array must be provided with weighted_nums'}, 400
 
         return True, None, None
 
@@ -80,17 +82,52 @@ def basic_shuffle_handler(playlist_size):
         save_sequence_to_log(shuffled_sequence)
         return {"shuffled_sequence": shuffled_sequence}
 
-def unique_shuffle_handler():
+def unique_shuffle_handler(playlist_size):
         """
-        TODO: Will handle unique shuffle requests.
+        Handles unique shuffle requests: Ensures the new sequence is different from the previous sequence generated.
         """
-        pass
+        # Get last sequence
+        log_file = create_log()
+        with open(log_file, 'r') as log_file:
+                log_data = json.load(log_file)
+                last_sequence = log_data.get("last_sequence", [])
 
-def weighted_shuffle_handler():
+        # if missing or size is different, do basic shuffle
+        if not last_sequence or len(last_sequence) != playlist_size:
+                return basic_shuffle_handler(playlist_size)
+        
+        # Otherwise, check for difference
+        while True:
+                new_shuffled_sequence = basic_shuffle_handler(playlist_size)
+                if new_shuffled_sequence["shuffled_sequence"] != last_sequence:
+                        return new_shuffled_sequence
+
+def weighted_shuffle_handler(playlist_size, weights):
         """
-        TODO: Will handle weighted shuffle requests.
+        Handles weighted shuffle requests:
+        Calculations done by random.choices from Python's random library.
+        probability of a number is the weight assigned to that index / sum of all possible weights.
+        Ex.
+        {
+            "weighted_nums": 3
+            "weights: [5, 1, 1]"
+        }
+        number 1 has 5/7 or 71% chance to occur again.
+        number 2 has 1/7 or 14% chance to occur again.
+        number 3 has 1/7 or 14% chance to occur again.
         """
-        pass
+        if len(weights) != playlist_size:
+                return jsonify({"error": "weights array length must match playlist size"}), 400
+
+        # Generate sequence 1 to playlist_size
+        sequence = list(range(1, playlist_size + 1))
+
+        # Use random.choices: probability = weight / sum(all_weights)
+        shuffled_sequence = random.choices(sequence, weights=weights, k=playlist_size)
+
+        save_sequence_to_log(shuffled_sequence)
+        return {"shuffled_sequence": shuffled_sequence}
+
 
 ####################
 # Main Route Handler
@@ -100,6 +137,7 @@ def weighted_shuffle_handler():
 def handle_shuffle_request():
         """
         Main endpoint for handling shuffle requests.
+        Routes based on which key is used in the request.
         """
         # Parse JSON request
         request_data = request.get_json()
@@ -109,21 +147,16 @@ def handle_shuffle_request():
         if not is_valid:
                 return jsonify(error_message), error_code
 
-        # Get shuffle type from request
-        shuffle_type = request_data.get("service_type", "basic")
-
-        # Route to appropriate handler
-        if shuffle_type == "basic":
+        # Route based on which key is present
+        if "random_nums" in request_data:
                 response = basic_shuffle_handler(request_data["random_nums"])
-
-        # TODO: implement unique and weighted shuffle handlers
-        # elif shuffle_type == "unique":
-        #         response = unique_shuffle_handler(request_data["random_nums"])
-        # elif shuffle_type == "weighted":
-        #         response = weighted_shuffle_handler(request_data["random_nums"], request_data.get("weights", []))
-        else:
-                return jsonify({"error": "Invalid shuffle type"}), 400
-
+        elif "unique_nums" in request_data:
+                response = unique_shuffle_handler(request_data["unique_nums"])
+        elif "weighted_nums" in request_data:
+                response = weighted_shuffle_handler(
+                    request_data["weighted_nums"],
+                    request_data.get("weights", [])
+                )
         return jsonify(response)
 
 if __name__ == "__main__":
