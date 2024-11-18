@@ -5,8 +5,7 @@ url = "http://localhost:8000/shuffle"
 
 # Test data to send.
 data = {
-        "weighted_nums": 3,
-        "weights": [5, 1, 1]
+        "unique_nums": 5,
 }
 
 # Send POST request to the microservice.

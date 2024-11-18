@@ -64,11 +64,33 @@ Microservice responds with:
 ```
 
 ### Unique shuffle
-TODO: Update when implementation is completed.
+Main program sends:
+```JSON
+{
+    "unique_nums": 5
+}
+```
+Microservice responds with:
+```JSON
+{
+    "shuffled_sequence": [4, 1, 3, 2, 5]
+}
+```
 
 ### Weighted Shuffle
-TODO: Update when implementation is completed.
-
+Main program sends:
+```JSON
+{
+    "weighted_nums": 3
+    "weights": [5, 1, 1]
+}
+```
+Microservice responds with:
+```JSON
+{
+    "shuffled_sequence": [1, 1, 1]  // likley sequence since '1' is given a weight of '5 out of possible '7'.
+}
+```
 
 ## How to Request and Receive
 You can make requests to this microservice using any HTTP client library in your programming language of choice.
