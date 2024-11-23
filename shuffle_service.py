@@ -82,15 +82,21 @@ def basic_shuffle_handler(playlist_size):
         save_sequence_to_log(shuffled_sequence)
         return {"shuffled_sequence": shuffled_sequence}
 
+def read_log():
+        """
+        Returns the logged sequence. Helper function for Service Handlers
+        """
+        log_file = create_log()
+        with open(log_file, 'r') as log_file:
+                log_data = json.load(log_file)
+                return log_data.get("last_sequence", [])
+
 def unique_shuffle_handler(playlist_size):
         """
         Handles unique shuffle requests: Ensures the new sequence is different from the previous sequence generated.
         """
         # Get last sequence
-        log_file = create_log()
-        with open(log_file, 'r') as log_file:
-                log_data = json.load(log_file)
-                last_sequence = log_data.get("last_sequence", [])
+        last_sequence = read_log()
 
         # if missing or size is different, do basic shuffle
         if not last_sequence or len(last_sequence) != playlist_size:
